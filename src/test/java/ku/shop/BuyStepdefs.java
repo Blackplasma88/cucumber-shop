@@ -6,6 +6,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BuyStepdefs {
 
@@ -18,15 +19,27 @@ public class BuyStepdefs {
         order = new Order();
     }
 
-    @Given("a product {string} with price {float} exists")
+    @Given("สินค้า {string} with price {float} exists")
     public void a_product_with_price_exists(String name, double price) {
         catalog.addProduct(name, price);
+    }
+
+    @Given("สินค้า {string} with price {float} exists {int} quantity")
+    public void a_product_with_price_exists_quantity(String name, double price, int quantity) {
+        catalog.addProduct(name, price, quantity);
     }
 
     @When("I buy {string} with quantity {int}")
     public void i_buy_with_quantity(String name, int quantity) {
         Product prod = catalog.getProduct(name);
         order.addItem(prod, quantity);
+    }
+
+    @When("I buy {string} over quantity {int}")
+    public void i_buy_over_quantity(String name, int quantity){
+        Product prod = catalog.getProduct(name);
+        assertThrows(IllegalArgumentException.class,
+                () -> order.addItem(prod, quantity));
     }
 
     @Then("total should be {float}")
